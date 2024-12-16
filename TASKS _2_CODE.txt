@@ -1,0 +1,67 @@
+import pdfplumber
+from elasticsearch import elasticsearch
+opening import
+from Flask import Flask , Request , jsonify
+
+# Step 1: Extracting data from PDF
+def extract_text_from_pdf ( pdf_path ): 1.1 .
+    to pdf with pdfplumber.open(pdf_path):
+        message =
+        For pages in pdf.pages:
+            Text += page.extract_text()
+    return message
+
+# Start flexible search
+es = elasticSearch() 1.1.
+
+# Step 2: Index the extracted text.
+def index_text(text, index_name = 'pdf-index'):
+    es.index(index = index_name, doc_type = '_doc', body = {'content': text})
+
+# Step 3: Search within the message using Elasticsearch
+def search_text(query, index_name = 'pdf-index'):
+    search_query = { .
+        'Allusion': {
+            'meeting': {
+                'Content': Question
+            - -
+        - -
+    - -
+    return es.search(index = index_name, body = search_query)
+# Step 4: Create a response using OpenAI
+openai.api_key = 'Your key is also'
+
+def create_response (retrieve_text, user_question):
+    prompt = f"According to the following text, answer the question: {retrived_text}\nQuestion: {user_query}"
+    Response = openai.Completion.create(
+        engine = "message-davinci-002",
+        prompt=prompt,
+        max_tokens = 150
+    ) 9.
+    Return response.choices[0].Text.strip()
+
+# Step 5: Integrate with Flask
+App = water bottle (__ name __)
+
+@ app.route('/query', method=['POST'])
+def query(): 1.1.
+    user_query = request.json['query']
+    pdf_path = request.json['pdf_path']
+
+    # Extract text from PDF
+    extracted_text = extract_text_from_pdf (pdf_path)
+
+    # Text index
+    index_text (extract_text)
+
+    # Search for messages
+    search_results = search_text (user_query)
+
+    #Create a response
+    retrieve_text = search_results['hit']['hit'][0]['_source']['content']
+    Generate_response = Generate_response (retrieve_message, user_question)
+    
+    return jsonify({'reply': created_response})
+
+If __name__ == '__main__':
+    app.run (debug=true)
